@@ -1,6 +1,7 @@
 # mushonkey
 
 A clean and configurable inputs & outputs Sankey-esque chart.
+Designed by @mushon.
 
 ![Example](https://i.imgur.com/cMuFYrx.png)
 
