@@ -74,6 +74,7 @@ export class MushonKeyChart {
   public centerWidth: number;
   public centerHeight: number;
   public centerDirectionLeft: boolean;
+  public margin: any;
 
   constructor(groups: Array<MushonKeyFlowGroup>,
               centerText?: string,
@@ -86,6 +87,7 @@ export class MushonKeyChart {
     this.centerHeight = centerHeight || 150;
     this.centerWidth = centerWidth || 200;
     this.centerDirectionLeft = centerDirectionLeft == null ? true : centerDirectionLeft;
+    this.margin = margin || {top: 20, bottom: 20, left: 20, right: 20}
   }
 }
 
@@ -119,8 +121,6 @@ export class MushonkeyComponent implements OnInit, OnChanges {
     // private slope: number = 1.5;
     private centerScale: any;
 
-    private margin: any = { top: 20, bottom: 20, left: 20, right: 20};
-
     private d3Chart: any;
     private width: number;
     private height: number;
@@ -143,8 +143,8 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
     createChart() {
       const element = this.el.nativeElement;
-      this.width = element.offsetWidth - this.margin.left - this.margin.right;
-      this.height = element.offsetHeight - this.margin.top - this.margin.bottom;
+      this.width = element.offsetWidth - this.chart.margin.left - this.chart.margin.right;
+      this.height = element.offsetHeight - this.chart.margin.top - this.chart.margin.bottom;
       this.connectorWidth = this.width / 2;
       this.center = this.height / 2;
       this.centerOfs = this.center - this.chart.centerHeight / 2;
@@ -156,7 +156,7 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       // chart plot area
       this.d3Chart = svg.append('g')
         .attr('class', 'mushonkey')
-        .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
+        .attr('transform', `translate(${this.chart.margin.left}, ${this.chart.margin.top})`);
 
     }
 
