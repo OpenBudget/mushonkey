@@ -146,8 +146,8 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       this.width = element.offsetWidth - this.chart.margin.left - this.chart.margin.right;
       this.height = element.offsetHeight - this.chart.margin.top - this.chart.margin.bottom;
       this.connectorWidth = this.width / 2;
-      this.center = this.height / 2;
-      this.centerOfs = this.center - this.chart.centerHeight / 2;
+      this.centerOfs = <number>d3.max(this.chart.groups, g => -g.offset);
+      this.center = this.centerOfs + this.chart.centerHeight / 2;
 
       const svg = d3.select(element).append('svg')
         .attr('width', element.offsetWidth)
@@ -310,8 +310,8 @@ export class MushonkeyComponent implements OnInit, OnChanges {
           .style('paint-order', 'stroke')
           .style('stroke-linejoin', 'round')
           .style('alignment-baseline', 'middle')
-          .style('cursor', 'pointer')
-          .on('click', d => { this.onSelected.emit(d.context); console.log(d); })
+          .style('cursor', d => d.context ? 'pointer' : 'inherit')
+          .on('click', d => { if (d.context) { this.onSelected.emit(d.context); } })
         ;
 
         this.d3Chart.selectAll('.connector')
