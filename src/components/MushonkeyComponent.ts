@@ -329,7 +329,7 @@ export class MushonkeyComponent implements OnInit, OnChanges {
           .style('fill', d =>  d.group.textColor )
           .style('font-size', d => d.group.labelTextSize)
           .style('stroke', d => d.size < d.group.labelTextSize ? 'white': 'none' )
-          .style('stroke-width', d => d.group.labelTextSize)
+          .style('stroke-width', d => d.group.labelTextSize/2)
           .text(d => { return d.label; });
     }
 
