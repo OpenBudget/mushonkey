@@ -75,16 +75,16 @@ export class AppComponent {
 
     let groups: Array<MushonKeyFlowGroup> = [];
 
-    groups.push(new MushonKeyFlowGroup(true, leftFlows1, 'taxes', -200));
-    groups.push(new MushonKeyFlowGroup(false, rightFlows1, 'main-income', -100, 0.8, 5, 30));
-    groups.push(new MushonKeyFlowGroup(false, rightFlows2, 'special-income', 100, 0.6, 0.6, 2));
-    groups.push(new MushonKeyFlowGroup(true, leftFlows2, 'shopping', 100, 0.75, 0.8, 10));
+    groups.push(new MushonKeyFlowGroup(false, leftFlows1, 'taxes', -200));
+    groups.push(new MushonKeyFlowGroup(true, rightFlows1, 'main-income', -100, 0.8, 5, 30));
+    groups.push(new MushonKeyFlowGroup(true, rightFlows2, 'special-income', 100, 0.6, 0.6, 2));
+    groups.push(new MushonKeyFlowGroup(false, leftFlows2, 'shopping', 100, 0.75, 0.8, 10));
 
     for ( let group of groups ) {
       group.labelTextSize = 12;
     }
 
-    this.chart = new MushonKeyChart(groups, 'My Family Budget', 200, 100);
+    this.chart = new MushonKeyChart(groups, 'My Family Budget', 200, 100, false);
   }
 
   flowSelected(context) {

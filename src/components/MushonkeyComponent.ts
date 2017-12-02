@@ -157,7 +157,12 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       this.d3Chart = svg.append('g')
         .attr('class', 'mushonkey')
         .attr('transform', `translate(${this.chart.margin.left}, ${this.chart.margin.top})`);
-
+      this.d3Chart.append('g')
+        .attr('class', 'connectors');
+      this.d3Chart.append('g')
+        .attr('class', 'centerpiece-container');
+      this.d3Chart.append('g')
+        .attr('class', 'labels');
     }
 
     processData() {
@@ -292,35 +297,40 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
         this.processData();
 
-        const update = this.d3Chart.selectAll('.connector-group')
+        let connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
+          .data(this.layout);
+      let labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
           .data(this.layout);
 
         // remove exiting connectors
-        update.exit().remove();
+        connectorsUpdate.exit().remove();
+        labelsUpdate.exit().remove();
 
         // add new bars
-        let newNodes = update.enter()
-          .append('g')
-          .attr('class', 'connector-group');
-        newNodes.append('path')
+        connectorsUpdate.enter()
+          .append('path')
           .attr('class', d => 'connector ' + d.group.klass)
           .style('fill', 'none');
-        newNodes.append('text')
+
+        labelsUpdate.enter()
+          .append('text')
           .attr('class', d => 'text ' + d.group.klass)
           .style('paint-order', 'stroke')
           .style('stroke-linejoin', 'round')
           .style('alignment-baseline', 'middle')
           .style('cursor', d => d.context ? 'pointer' : 'inherit')
-          .on('click', d => { if (d.context) { this.onSelected.emit(d.context); } })
-        ;
+          .on('click', d => { if (d.context) { this.onSelected.emit(d.context); } });
 
-        this.d3Chart.selectAll('.connector')
-          .data(this.layout)
+      connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
+        .data(this.layout);
+      labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
+        .data(this.layout);
+
+      connectorsUpdate
           .attr('d', d => this.generatePath(d))
-          .style('stroke-width', d => debug ? 1 : d.size+0.5)
+          .style('stroke-width', d => debug ? 1 : d.size+0.5);
 
-        this.d3Chart.selectAll('.text')
-          .data(this.layout)
+        labelsUpdate
           .attr('y', d => d.sideOfs)
           .attr('x', d => d.group.leftSide ?
             this.connectorWidth - this.chart.centerWidth/2 - d.group.widthPx + this.textIndent :
@@ -344,11 +354,13 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       centerPath.lineTo(this.connectorWidth - this.chart.centerWidth/2 + arrowOfs, this.centerOfs + this.chart.centerHeight/2);
       centerPath.closePath();
 
-      this.d3Chart.append('path')
+      let center = this.d3Chart.select('g.centerpiece-container');
+
+      center.append('path')
         .attr('class', 'centerpiece')
         .attr('d', centerPath)
       ;
-      this.d3Chart.append('text')
+      center.append('text')
         .attr('class', 'centerpiece-text')
         .text(this.chart.centerText)
         .attr('x', this.connectorWidth + arrowOfs)
