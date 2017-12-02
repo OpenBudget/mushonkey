@@ -313,10 +313,12 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         // add new bars
         connectorsUpdate.enter()
           .append('path')
+          .attr('class', 'connector')
           .style('fill', 'none');
 
         labelsUpdate.enter()
           .append('text')
+          .attr('class', 'text')
           .style('paint-order', 'stroke')
           .style('stroke-linejoin', 'round')
           .style('alignment-baseline', 'middle')
