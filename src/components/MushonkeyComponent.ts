@@ -313,16 +313,13 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         // add new bars
         connectorsUpdate.enter()
           .append('path')
-          .attr('class', d => 'connector ' + d.group.klass)
           .style('fill', 'none');
 
         labelsUpdate.enter()
           .append('text')
-          .attr('class', d => 'text ' + d.group.klass)
           .style('paint-order', 'stroke')
           .style('stroke-linejoin', 'round')
           .style('alignment-baseline', 'middle')
-          .style('cursor', d => d.context ? 'pointer' : 'inherit')
           .on('click', d => { if (d.context) { this.onSelected.emit(d.context); } });
 
       connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
@@ -332,6 +329,7 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
       connectorsUpdate
           .attr('d', d => this.generatePath(d))
+          .attr('class', d => 'connector ' + d.group.klass)
           .style('stroke-width', d => debug ? 1 : d.scaledSize+0.5);
 
       labelsUpdate
@@ -339,6 +337,8 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         .attr('x', d => d.group.leftSide ?
           this.connectorWidth - this.chart.centerWidth/2 - d.group.widthPx + this.textIndent :
           this.connectorWidth + this.chart.centerWidth/2 + d.group.widthPx - this.textIndent)
+        .attr('class', d => 'text ' + d.group.klass)
+        .style('cursor', d => d.context ? 'pointer' : 'inherit')
         .style('text-anchor', d => d.group.leftSide ? 'start' : 'end' )
         .style('fill', d =>  d.group.textColor )
         .style('font-size', d => d.group.labelTextSize)
