@@ -8,6 +8,7 @@ const debug = false;
 
 export class MushonKeyFlow {
   public size: number;
+  public scaledSize: number;
   public label: string;
   public context: any;
   public group: MushonKeyFlowGroup;
@@ -119,7 +120,8 @@ export class MushonkeyComponent implements OnInit, OnChanges {
     private centerSeparation: number = 1;
 
     // private slope: number = 1.5;
-    private centerScale: any;
+    private centerScaleRight: any;
+    private centerScaleLeft: any;
 
     private d3Chart: any;
     private width: number;
@@ -186,33 +188,35 @@ export class MushonkeyComponent implements OnInit, OnChanges {
             }
           }
         }
-        let sum: number = <number>d3.max([leftSum, rightSum]);
-        let count: number = <number>d3.max([leftCount, rightCount]);
-        this.centerScale = d3.scaleLinear().domain([0, sum]).range([0, this.chart.centerHeight - this.centerSeparation*(count - 1)]);
+        this.centerScaleLeft = d3.scaleLinear().domain([0, leftSum]).range([0, this.chart.centerHeight - this.centerSeparation*(leftCount - 1)]);
+        this.centerScaleRight = d3.scaleLinear().domain([0, rightSum]).range([0, this.chart.centerHeight - this.centerSeparation*(rightCount - 1)]);
 
         let leftOfs = {
-          count: leftCount - 1,
           centerOfs: this.centerOfs,
           sideOfs: 0
         };
 
         let rightOfs = {
-          count: rightCount - 1,
           centerOfs: this.centerOfs,
           sideOfs: 0
         };
 
-      this.layout=[];
+        this.layout=[];
         for (let group of groups) {
           let ofs = group.leftSide ? leftOfs : rightOfs;
           ofs.sideOfs = this.center + group.offset;
           for (let flow of group.flows) {
-            let scaledWidth = this.centerScale(flow.size);
-            flow.size = scaledWidth;
+            let scaledWidth;
+            if (group.leftSide) {
+              scaledWidth = this.centerScaleLeft(flow.size);
+            } else {
+              scaledWidth = this.centerScaleRight(flow.size);
+            }
+            flow.scaledSize = scaledWidth;
             flow.centerOfs = ofs.centerOfs + scaledWidth/2;
             flow.sideOfs = ofs.sideOfs + scaledWidth/2;
             this.layout.push(flow);
-            ofs.centerOfs += scaledWidth + this.centerSeparation*(count-1)/ofs.count;
+            ofs.centerOfs += scaledWidth + this.centerSeparation;
             ofs.sideOfs += <number>d3.max([scaledWidth + this.sideSeparation, this.minSideHeight])
           }
         }
@@ -299,7 +303,7 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
         let connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
           .data(this.layout);
-      let labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
+        let labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
           .data(this.layout);
 
         // remove exiting connectors
@@ -328,19 +332,19 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
       connectorsUpdate
           .attr('d', d => this.generatePath(d))
-          .style('stroke-width', d => debug ? 1 : d.size+0.5);
+          .style('stroke-width', d => debug ? 1 : d.scaledSize+0.5);
 
-        labelsUpdate
-          .attr('y', d => d.sideOfs)
-          .attr('x', d => d.group.leftSide ?
-            this.connectorWidth - this.chart.centerWidth/2 - d.group.widthPx + this.textIndent :
-            this.connectorWidth + this.chart.centerWidth/2 + d.group.widthPx - this.textIndent)
-          .style('text-anchor', d => d.group.leftSide ? 'start' : 'end' )
-          .style('fill', d =>  d.group.textColor )
-          .style('font-size', d => d.group.labelTextSize)
-          .style('stroke', d => d.size < d.group.labelTextSize ? 'white': 'none' )
-          .style('stroke-width', d => d.group.labelTextSize/2)
-          .text(d => { return d.label; });
+      labelsUpdate
+        .attr('y', d => d.sideOfs)
+        .attr('x', d => d.group.leftSide ?
+          this.connectorWidth - this.chart.centerWidth/2 - d.group.widthPx + this.textIndent :
+          this.connectorWidth + this.chart.centerWidth/2 + d.group.widthPx - this.textIndent)
+        .style('text-anchor', d => d.group.leftSide ? 'start' : 'end' )
+        .style('fill', d =>  d.group.textColor )
+        .style('font-size', d => d.group.labelTextSize)
+        .style('stroke', d => d.scaledSize < d.group.labelTextSize ? 'white': 'none' )
+        .style('stroke-width', d => d.group.labelTextSize/2)
+        .text(d => { return d.label; });
     }
 
     drawCenter() {
