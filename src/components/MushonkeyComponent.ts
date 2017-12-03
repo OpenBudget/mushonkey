@@ -188,6 +188,11 @@ export class MushonkeyComponent implements OnInit, OnChanges {
             }
           }
         }
+        if (leftSum == 0) { leftSum = 1; }
+        if (rightSum == 0) { rightSum = 1; }
+        if (leftCount == 0) { leftCount = 1; }
+        if (rightCount == 0) { rightCount = 1; }
+
         this.centerScaleLeft = d3.scaleLinear().domain([0, leftSum]).range([0, this.chart.centerHeight - this.centerSeparation*(leftCount - 1)]);
         this.centerScaleRight = d3.scaleLinear().domain([0, rightSum]).range([0, this.chart.centerHeight - this.centerSeparation*(rightCount - 1)]);
 
