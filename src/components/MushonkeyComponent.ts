@@ -148,8 +148,6 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       this.width = element.offsetWidth - this.chart.margin.left - this.chart.margin.right;
       this.height = element.offsetHeight - this.chart.margin.top - this.chart.margin.bottom;
       this.connectorWidth = this.width / 2;
-      this.centerOfs = <number>d3.max(this.chart.groups, g => -g.offset);
-      this.center = this.centerOfs + this.chart.centerHeight / 2;
 
       const svg = d3.select(element).append('svg')
         .attr('width', element.offsetWidth)
@@ -195,6 +193,9 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
         this.centerScaleLeft = d3.scaleLinear().domain([0, leftSum]).range([0, this.chart.centerHeight - this.centerSeparation*(leftCount - 1)]);
         this.centerScaleRight = d3.scaleLinear().domain([0, rightSum]).range([0, this.chart.centerHeight - this.centerSeparation*(rightCount - 1)]);
+
+        this.centerOfs = <number>d3.max(this.chart.groups, g => -g.offset);
+        this.center = this.centerOfs + this.chart.centerHeight / 2;
 
         let leftOfs = {
           centerOfs: this.centerOfs,
