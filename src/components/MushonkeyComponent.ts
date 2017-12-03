@@ -133,7 +133,6 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         this.createChart();
         if (this.d3Chart) {
             this.updateChart();
-            this.drawCenter();
         }
     }
 
@@ -353,6 +352,8 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         .style('stroke', d => d.scaledSize < d.group.labelTextSize ? 'white': 'none' )
         .style('stroke-width', d => d.group.labelTextSize/2)
         .text(d => { return d.label; });
+
+      this.drawCenter();
     }
 
     drawCenter() {
@@ -368,17 +369,33 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
       let center = this.d3Chart.select('g.centerpiece-container');
 
-      center.append('path')
+      this.d3Chart.select('g.centerpiece-container')
+        .selectAll('path')
+        .data([1])
+        .enter()
+        .append('path')
         .attr('class', 'centerpiece')
+      ;
+      this.d3Chart.select('g.centerpiece-container')
+        .selectAll('path')
+        .data([1])
         .attr('d', centerPath)
       ;
-      center.append('text')
+      this.d3Chart.select('g.centerpiece-container')
+        .selectAll('text')
+        .data([1])
+        .enter()
+        .append('text')
         .attr('class', 'centerpiece-text')
+        .style('alignment-baseline', 'middle')
+        .style('text-anchor', 'middle')
+      ;
+      this.d3Chart.select('g.centerpiece-container')
+        .selectAll('text')
+        .data([1])
         .text(this.chart.centerText)
         .attr('x', this.connectorWidth + arrowOfs)
         .attr('y', this.centerOfs + this.chart.centerHeight/2)
-        .style('alignment-baseline', 'middle')
-        .style('text-anchor', 'middle')
       ;
     }
 }

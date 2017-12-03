@@ -9,6 +9,7 @@ declare const process: any;
     <div>Roundness: <input type="number" step="0.2" [(ngModel)]="chart.groups[0].roundness" (input)="mushonkey.updateChart()"/></div>
     <div>Width: <input type="number" step="0.05" [(ngModel)]="chart.groups[0].width" (input)="mushonkey.updateChart()"/></div>
     <div>Offset: <input type="number" step="5" [(ngModel)]="chart.groups[0].offset" (input)="mushonkey.updateChart()"/></div>
+    <div>Title: <input type="text" [(ngModel)]="chart.centerText" (input)="mushonkey.updateChart()"/></div>
     <div>Last selected: {{selected}}</div>
     <div id="mushonkey-container">
         <mushonkey #mushonkey [chart]="chart" (onSelected)="flowSelected($event)"></mushonkey>
