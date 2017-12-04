@@ -306,7 +306,11 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       return p.toString();
     }
 
-    updateChart() {
+    updateChart(chart?: MushonKeyChart) {
+
+        if (chart) {
+          this.chart = chart;
+        }
 
         this.processData();
 
