@@ -311,9 +311,9 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         this.processData();
 
         let connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
-          .data(this.layout);
+          .data(this.layout, (d: MushonKeyFlow) => d.label);
         let labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
-          .data(this.layout);
+          .data(this.layout, (d: MushonKeyFlow) => d.label);
 
         // remove exiting connectors
         connectorsUpdate.exit().remove();
@@ -334,9 +334,9 @@ export class MushonkeyComponent implements OnInit, OnChanges {
           .on('click', d => { if (d.context) { this.onSelected.emit(d.context); } });
 
       connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
-        .data(this.layout);
+        .data(this.layout, (d: MushonKeyFlow) => d.label);
       labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
-        .data(this.layout);
+        .data(this.layout, (d: MushonKeyFlow) => d.label);
 
       connectorsUpdate
           .attr('d', d => this.generatePath(d))
