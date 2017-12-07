@@ -76,19 +76,22 @@ export class MushonKeyChart {
   public centerHeight: number;
   public centerDirectionLeft: boolean;
   public margin: any;
+  public centerVerticalOffset: number;
 
   constructor(groups: Array<MushonKeyFlowGroup>,
               centerText?: string,
               centerWidth?: number,
               centerHeight?: number,
               centerDirectionLeft?: boolean,
-              margin?: any) {
+              margin?: any,
+              centerVerticalOffset?: number) {
     this.groups = groups;
     this.centerText = centerText || '';
     this.centerHeight = centerHeight || 150;
     this.centerWidth = centerWidth || 200;
     this.centerDirectionLeft = centerDirectionLeft == null ? true : centerDirectionLeft;
     this.margin = margin || {top: 20, bottom: 20, left: 20, right: 20}
+    this.centerVerticalOffset = centerVerticalOffset;
   }
 }
 
@@ -193,10 +196,14 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         this.centerScaleLeft = d3.scaleLinear().domain([0, leftSum]).range([0, this.chart.centerHeight - this.centerSeparation*(leftCount - 1)]);
         this.centerScaleRight = d3.scaleLinear().domain([0, rightSum]).range([0, this.chart.centerHeight - this.centerSeparation*(rightCount - 1)]);
 
-        if (this.chart.groups.length > 0) {
-          this.centerOfs = <number>d3.max(this.chart.groups, g => -g.offset);
+        if (this.chart.centerVerticalOffset) {
+          this.centerOfs = this.chart.centerVerticalOffset;
         } else {
-          this.centerOfs = 0;
+          if (this.chart.groups.length > 0) {
+            this.centerOfs = <number>d3.max(this.chart.groups, g => -g.offset);
+          } else {
+            this.centerOfs = 0;
+          }
         }
         this.center = this.centerOfs + this.chart.centerHeight / 2;
 
