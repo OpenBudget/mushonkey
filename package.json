@@ -1,6 +1,6 @@
 {
   "name": "mushonkey",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Simple cenrtal node Sankey designed by @mushon. openbudget.github.io/mushonkey",
   "main": "lib/index.js",
   "module": "lib/index.js",
