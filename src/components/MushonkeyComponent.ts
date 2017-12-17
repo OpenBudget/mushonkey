@@ -352,7 +352,10 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       connectorsUpdate
           .attr('d', d => this.generatePath(d))
           .attr('class', d => 'connector ' + d.group.klass)
-          .style('stroke-width', d => debug ? 1 : d.scaledSize+0.5);
+          .style('stroke-dasharray', null)
+          .style('stroke-dashoffset', null)
+          .style('stroke-width', d => debug ? 1 : d.scaledSize+0.5)
+      ;
 
       labelsUpdate
         .attr('y', d => d.sideOfs)
