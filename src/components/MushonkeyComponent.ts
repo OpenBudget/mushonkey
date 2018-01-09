@@ -132,17 +132,23 @@ export class MushonkeyComponent implements OnInit, OnChanges {
 
     constructor() { }
 
-    ngOnInit() {
-        this.createChart();
-        if (this.d3Chart) {
-            this.updateChart();
+    update() {
+      if (this.chart) {
+        if (!this.d3Chart) {
+          this.createChart();
         }
+        if (this.d3Chart) {
+          this.updateChart();
+        }
+      }
+    }
+
+    ngOnInit() {
+      this.update();
     }
 
     ngOnChanges() {
-        if (this.d3Chart) {
-            this.updateChart();
-        }
+      this.update();
     }
 
     createChart() {
