@@ -211,6 +211,7 @@ export class MushonkeyComponent implements OnInit, OnChanges {
             this.centerOfs = 0;
           }
         }
+        this.centerOfs = this.centerOfs < 0 ? 0 : this.centerOfs;
         this.center = this.centerOfs + this.chart.centerHeight / 2;
 
         let leftOfs = {
