@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import {MushonKeyFlowGroup, MushonKeyFlow, MushonKeyChart} from "../src/components/MushonkeyComponent";
+import {MushonKeyFlowGroup, MushonKeyFlow, MushonKeyChart} from 'mushonkey';
 declare const process: any;
 
 @Component({
-  selector: 'my-app',
+  selector: 'app-root',
   template: `
     <div>Slope: <input type="number" step="0.05" [(ngModel)]="chart.groups[0].slope" (input)="mushonkey.updateChart()"/></div>
     <div>Roundness: <input type="number" step="0.2" [(ngModel)]="chart.groups[0].roundness" (input)="mushonkey.updateChart()"/></div>

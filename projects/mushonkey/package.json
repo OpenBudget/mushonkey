@@ -1,0 +1,25 @@
+{
+  "name": "mushonkey",
+  "version": "0.2.0",
+  "peerDependencies": {
+    "@angular/common": "^7.1.0",
+    "@angular/core": "^7.1.0"
+  },
+  "description": "Simple central node Sankey designed by @mushon. openbudget.github.io/mushonkey",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenBudget/mushonkey.git"
+  },
+  "keywords": [
+    "Sankey",
+    "d3",
+    "Angular 2",
+    "OpenBudget"
+  ],
+  "author": "adam.kariv@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OpenBudget/mushonkey/issues"
+  },
+  "homepage": "https://github.com/OpenBudget/mushonkey#readme"
+}
