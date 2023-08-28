@@ -1,0 +1,33 @@
+#mushonkey-container {
+    width: 1200px;
+    height: 600px;
+}
+
+:host {
+    ::ng-deep {
+        .text { font-family: Courier; }
+        .taxes.connector { stroke: lightblue; }
+        .taxes.text { fill: voilet; }
+        
+        .main-income.connector{ stroke: red; }
+        .main-income.text{ fill: black; }
+        
+        .special-income.connector{ stroke: violet; }
+        .special-income.text{ fill: orange; }
+        
+        .shopping.connector{ stroke: green; }
+        .shopping.text{ fill: turquoise; }
+        
+        .centerpiece-text { 
+            font-size: 20px;
+            stroke: none;
+            fill: white;
+        }
+
+        .centerpiece { 
+            stroke: lightgray;
+            stroke-width: 2;
+            fill: gray;
+         }
+    }
+}

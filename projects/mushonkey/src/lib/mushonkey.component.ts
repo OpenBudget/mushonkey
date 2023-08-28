@@ -1,8 +1,12 @@
 import {
   Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation, Output,
-  EventEmitter
+  EventEmitter,
+  AfterViewInit
 } from '@angular/core';
-import * as d3 from 'd3';
+import { select as d3Select } from 'd3-selection';
+import { max as d3Max } from 'd3-array';
+import { scaleLinear as d3ScaleLinear } from 'd3-scale';
+import { path as d3Path } from 'd3-path';
 
 const debug = false;
 
@@ -91,27 +95,26 @@ export class MushonKeyChart {
     this.centerWidth = centerWidth || 200;
     this.centerDirectionLeft = centerDirectionLeft == null ? true : centerDirectionLeft;
     this.margin = margin || {top: 20, bottom: 20, left: 20, right: 20}
-    this.centerVerticalOffset = centerVerticalOffset;
+    this.centerVerticalOffset = centerVerticalOffset || 0;
   }
 }
 
 @Component({
-    selector: 'mushonkey',
-    template: `<div class="d3-chart" #el></div>`,
-    styles: [`
-.d3-chart {
-  width: 100%;
-  height: 100%;
-}
-`],
-    encapsulation: ViewEncapsulation.None
+  selector: 'mushonkey',
+  template: ``,
+  styles: [`:host {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  `]
 })
-export class MushonkeyComponent implements OnInit, OnChanges {
-    @ViewChild('el') private el: ElementRef;
-    @Input('chart') private chart: MushonKeyChart;
+export class MushonkeyComponent implements OnInit, OnChanges, AfterViewInit {
+    // @ViewChild('el') private el: ElementRef;
+    @Input('chart') chart: MushonKeyChart;
     @Output() onSelected = new EventEmitter<any>();
 
-  private layout: Array<MushonKeyFlow> = [];
+    private layout: Array<MushonKeyFlow> = [];
 
     private connectorWidth: number;
     private center: number;
@@ -130,9 +133,12 @@ export class MushonkeyComponent implements OnInit, OnChanges {
     private width: number;
     private height: number;
 
-    constructor() { }
+    constructor(private el: ElementRef) {}
 
     update() {
+      if (!this.el?.nativeElement) {
+        return;
+      }
       if (this.chart) {
         if (!this.d3Chart) {
           this.createChart();
@@ -151,13 +157,17 @@ export class MushonkeyComponent implements OnInit, OnChanges {
       this.update();
     }
 
+    ngAfterViewInit() {
+      this.update();
+    }
+
     createChart() {
       const element = this.el.nativeElement;
       this.width = element.offsetWidth - this.chart.margin.left - this.chart.margin.right;
       this.height = element.offsetHeight - this.chart.margin.top - this.chart.margin.bottom;
       this.connectorWidth = this.width / 2;
 
-      const svg = d3.select(element).append('svg')
+      const svg = d3Select(element).append('svg')
         .attr('width', element.offsetWidth)
         .attr('height', element.offsetHeight);
 
@@ -199,14 +209,14 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         if (leftCount == 0) { leftCount = 1; }
         if (rightCount == 0) { rightCount = 1; }
 
-        this.centerScaleLeft = d3.scaleLinear().domain([0, leftSum]).range([0, this.chart.centerHeight - this.centerSeparation*(leftCount - 1)]);
-        this.centerScaleRight = d3.scaleLinear().domain([0, rightSum]).range([0, this.chart.centerHeight - this.centerSeparation*(rightCount - 1)]);
+        this.centerScaleLeft = d3ScaleLinear().domain([0, leftSum]).range([0, this.chart.centerHeight - this.centerSeparation*(leftCount - 1)]);
+        this.centerScaleRight = d3ScaleLinear().domain([0, rightSum]).range([0, this.chart.centerHeight - this.centerSeparation*(rightCount - 1)]);
 
         if (this.chart.centerVerticalOffset) {
           this.centerOfs = this.chart.centerVerticalOffset;
         } else {
           if (this.chart.groups.length > 0) {
-            this.centerOfs = <number>d3.max(this.chart.groups, g => -g.offset);
+            this.centerOfs = <number>d3Max(this.chart.groups, g => -g.offset);
           } else {
             this.centerOfs = 0;
           }
@@ -240,14 +250,14 @@ export class MushonkeyComponent implements OnInit, OnChanges {
             flow.sideOfs = ofs.sideOfs + scaledWidth/2;
             this.layout.push(flow);
             ofs.centerOfs += scaledWidth + this.centerSeparation;
-            ofs.sideOfs += <number>d3.max([scaledWidth + this.sideSeparation, this.minSideHeight])
+            ofs.sideOfs += <number>d3Max([scaledWidth + this.sideSeparation, this.minSideHeight])
           }
         }
 
     }
 
     generatePath(d: MushonKeyFlow) {
-      let p=d3.path();
+      let p=d3Path();
       let diffY = d.sideOfs - d.centerOfs,
           down = diffY > 0 ? 1 : -1,
           r = d.group.headLengthPx / Math.tan(Math.atan(1/d.group.slope) / 2),
@@ -349,7 +359,7 @@ export class MushonkeyComponent implements OnInit, OnChanges {
           .style('paint-order', 'stroke')
           .style('stroke-linejoin', 'round')
           .style('alignment-baseline', 'middle')
-          .on('click', d => { if (d.context) { this.onSelected.emit(d.context); } });
+          .on('click', (d: any) => { if (d.context) { this.onSelected.emit(d.context); } });
 
       connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
         .data(this.layout, (d: MushonKeyFlow) => d.label);
@@ -357,31 +367,31 @@ export class MushonkeyComponent implements OnInit, OnChanges {
         .data(this.layout, (d: MushonKeyFlow) => d.label);
 
       connectorsUpdate
-          .attr('d', d => this.generatePath(d))
-          .attr('class', d => 'connector ' + d.group.klass)
-          .style('stroke-width', d => debug ? 1 : d.scaledSize+0.5)
+          .attr('d', (d: any) => this.generatePath(d))
+          .attr('class', (d: any) => 'connector ' + d.group.klass)
+          .style('stroke-width', (d: any) => debug ? 1 : d.scaledSize+0.5)
       ;
 
       labelsUpdate
-        .attr('y', d => d.sideOfs)
-        .attr('x', d => d.group.leftSide ?
+        .attr('y', (d: any) => d.sideOfs)
+        .attr('x', (d: any) => d.group.leftSide ?
           this.connectorWidth - this.chart.centerWidth/2 - d.group.widthPx + this.textIndent :
           this.connectorWidth + this.chart.centerWidth/2 + d.group.widthPx - this.textIndent)
-        .attr('class', d => 'text ' + d.group.klass)
-        .style('cursor', d => d.context ? 'pointer' : 'inherit')
-        .style('text-anchor', d => d.group.leftSide ? 'start' : 'end' )
-        .style('fill', d =>  d.group.textColor )
-        .style('font-size', d => d.group.labelTextSize)
-        .style('stroke', d => d.scaledSize < d.group.labelTextSize ? 'white': 'none' )
-        .style('stroke-width', d => d.group.labelTextSize/2)
-        .text(d => { return d.label; });
+        .attr('class', (d: any) => 'text ' + d.group.klass)
+        .style('cursor', (d: any) => d.context ? 'pointer' : 'inherit')
+        .style('text-anchor', (d: any) => d.group.leftSide ? 'start' : 'end' )
+        .style('fill', (d: any) =>  d.group.textColor )
+        .style('font-size', (d: any) => d.group.labelTextSize)
+        .style('stroke', (d: any) => d.scaledSize < d.group.labelTextSize ? 'white': 'none' )
+        .style('stroke-width', (d: any) => d.group.labelTextSize/2)
+        .text((d: any) => { return d.label; });
 
       this.drawCenter();
     }
 
     drawCenter() {
       let arrowOfs = this.chart.centerDirectionLeft ? -this.chart.centerHeight/3: this.chart.centerHeight/3;
-      let centerPath = d3.path();
+      let centerPath = d3Path();
       centerPath.moveTo(this.connectorWidth - this.chart.centerWidth/2, this.centerOfs);
       centerPath.lineTo(this.connectorWidth + this.chart.centerWidth/2, this.centerOfs);
       centerPath.lineTo(this.connectorWidth + this.chart.centerWidth/2 + arrowOfs, this.centerOfs + this.chart.centerHeight/2);
