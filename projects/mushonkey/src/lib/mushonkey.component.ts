@@ -3,7 +3,7 @@ import {
   EventEmitter,
   AfterViewInit
 } from '@angular/core';
-import { select as d3Select } from 'd3-selection';
+import { select as d3Select, Selection } from 'd3-selection';
 import { max as d3Max } from 'd3-array';
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
 import { path as d3Path } from 'd3-path';
@@ -129,7 +129,7 @@ export class MushonkeyComponent implements OnInit, OnChanges, AfterViewInit {
     private centerScaleRight: any;
     private centerScaleLeft: any;
 
-    private d3Chart: any;
+    private d3Chart: Selection<SVGGElement, unknown, null, undefined>;
     private width: number;
     private height: number;
 
@@ -332,38 +332,41 @@ export class MushonkeyComponent implements OnInit, OnChanges, AfterViewInit {
 
     updateChart(chart?: MushonKeyChart) {
 
-        if (chart) {
-          this.chart = chart;
-        }
+      if (chart) {
+        this.chart = chart;
+      }
 
-        this.processData();
+      this.processData();
 
-        let connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
-          .data(this.layout, (d: MushonKeyFlow) => d.label);
-        let labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
-          .data(this.layout, (d: MushonKeyFlow) => d.label);
-
-        // remove exiting connectors
-        connectorsUpdate.exit().remove();
-        labelsUpdate.exit().remove();
-
-        // add new bars
-        connectorsUpdate.enter()
-          .append('path')
-          .attr('class', 'connector')
-          .style('fill', 'none');
-
-        labelsUpdate.enter()
-          .append('text')
-          .attr('class', 'text')
-          .style('paint-order', 'stroke')
-          .style('stroke-linejoin', 'round')
-          .style('alignment-baseline', 'middle')
-          .on('click', (d: any) => { if (d.context) { this.onSelected.emit(d.context); } });
-
-      connectorsUpdate = this.d3Chart.select('g.connectors').selectAll('.connector')
+      let connectorsUpdate = this.d3Chart.select('g.connectors').selectAll<SVGElement, MushonKeyFlow>('.connector')
         .data(this.layout, (d: MushonKeyFlow) => d.label);
-      labelsUpdate = this.d3Chart.select('g.labels').selectAll('.text')
+      let labelsUpdate = this.d3Chart.select('g.labels').selectAll<SVGElement, MushonKeyFlow>('.text')
+        .data(this.layout, (d: MushonKeyFlow) => d.label);
+
+      // remove exiting connectors
+      connectorsUpdate.exit().remove();
+      labelsUpdate.exit().remove();
+
+      // add new bars
+      connectorsUpdate.enter()
+        .append('path')
+        .attr('class', 'connector')
+        .style('fill', 'none');
+
+      labelsUpdate.enter()
+        .append('text')
+        .attr('class', 'text')
+        .style('paint-order', 'stroke')
+        .style('stroke-linejoin', 'round')
+        .style('alignment-baseline', 'middle')
+        .on('click', (event: Event, d: MushonKeyFlow) => { 
+          // console.log('MushonKey clicked', d.context);
+          if (d.context) { this.onSelected.emit(d.context); } 
+        });
+
+      connectorsUpdate = this.d3Chart.select('g.connectors').selectAll<SVGElement, MushonKeyFlow>('.connector')
+        .data(this.layout, (d: MushonKeyFlow) => d.label);
+      labelsUpdate = this.d3Chart.select('g.labels').selectAll<SVGElement, MushonKeyFlow>('.text')
         .data(this.layout, (d: MushonKeyFlow) => d.label);
 
       connectorsUpdate
@@ -384,7 +387,7 @@ export class MushonkeyComponent implements OnInit, OnChanges, AfterViewInit {
         .style('font-size', (d: any) => d.group.labelTextSize)
         .style('stroke', (d: any) => d.scaledSize < d.group.labelTextSize ? 'white': 'none' )
         .style('stroke-width', (d: any) => d.group.labelTextSize/2)
-        .text((d: any) => { return d.label; });
+        .text((d: MushonKeyFlow) => { return d.label; });
 
       this.drawCenter();
     }

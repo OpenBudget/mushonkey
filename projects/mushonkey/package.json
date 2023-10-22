@@ -1,6 +1,6 @@
 {
   "name": "mushonkey",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Simple central node Sankey designed by @mushon. openbudget.github.io/mushonkey",
   "repository": {
     "type": "git",
