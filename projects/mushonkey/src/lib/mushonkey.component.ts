@@ -415,7 +415,7 @@ export class MushonkeyComponent implements OnInit, OnChanges, AfterViewInit {
       this.d3Chart.select('g.centerpiece-container')
         .selectAll('path')
         .data([1])
-        .attr('d', centerPath)
+        .attr('d', centerPath.toString())
       ;
       this.d3Chart.select('g.centerpiece-container')
         .selectAll('text')
