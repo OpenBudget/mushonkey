@@ -17,26 +17,26 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^16.2.0",
-    "@angular/common": "^16.2.0",
-    "@angular/compiler": "^16.2.0",
-    "@angular/core": "^16.2.0",
-    "@angular/forms": "^16.2.0",
-    "@angular/platform-browser": "^16.2.0",
-    "@angular/platform-browser-dynamic": "^16.2.0",
-    "@angular/router": "^16.2.0",
+    "@angular/animations": "^17.1.2",
+    "@angular/common": "^17.1.2",
+    "@angular/compiler": "^17.1.2",
+    "@angular/core": "^17.1.2",
+    "@angular/forms": "^17.1.2",
+    "@angular/platform-browser": "^17.1.2",
+    "@angular/platform-browser-dynamic": "^17.1.2",
+    "@angular/router": "^17.1.2",
     "d3-array": "^3.2.4",
     "d3-path": "^3.1.0",
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.13.0"
+    "zone.js": "~0.14.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.2.0",
-    "@angular/cli": "~16.2.0",
-    "@angular/compiler-cli": "^16.2.0",
+    "@angular-devkit/build-angular": "^17.1.2",
+    "@angular/cli": "~17.1.2",
+    "@angular/compiler-cli": "^17.1.2",
     "@types/d3-array": "^3.0.6",
     "@types/d3-path": "^3.0.0",
     "@types/d3-scale": "^4.0.4",
@@ -48,7 +48,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "ng-packagr": "^16.2.0",
-    "typescript": "~5.1.3"
+    "ng-packagr": "^17.1.2",
+    "typescript": "~5.3.3"
   }
 }
